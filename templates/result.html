@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combinations</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script>
+        // Function to filter items based on input value
+        function filterItems() {
+            var input, filter, ul, combinationLi, span, i, txtValue;
+            input = document.getElementById('item-choice');
+            filter = input.value.replace(/_/g, ' ').toUpperCase();
+            
+            
+            combinationLi = document.getElementsByClassName('combination-li');
+            
+            // Loop through all combination list items
+            for (i = 0; i < combinationLi.length; i++) {
+                spans = combinationLi[i].querySelectorAll('.item-name'); // Get the span with class 'item-name' inside the combination list item
+                var isPresent=false
+                for(j=0;j<spans.length;j++){
+                    if(isPresent==true) break;
+                    txtValue = spans[j].textContent || spans[j].innerText; // Get the text content of the span
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) { // Check if the text content matches the filter
+                        isPresent=true // Show the combination list item
+                        
+                    }    
+                }
+                if(isPresent==false){
+                    combinationLi[i].style.display = "none"; // Hide the combination list item
+                    
+                }else{
+                    
+                    combinationLi[i].style.display = "block"; // Hide the combination list item
+                }
+                
+            }
+        }
+        
+    </script>
+</head>
+<body class="bg-gray-100 p-8">
+    <h1 class="text-4xl">{{hotel_name}}</h1>
+    <h2 class="text-3xl font-bold mb-4">{{ combinations|length }} Combinations</h2>
+    <h2 class="text-xl font-bold mb-4">Get Maximum Discount By Choosing The Below Combinations</h2>
+    <p>Packaging charges and Delivery charges are subjected to hotel and delivery location</p>
+    <label for="item-choice">Choose an item:</label>
+    <input class="my-8 p-2 border-black" list="items-list" id="item-choice" name="item-choice" placeholder="Search your item here" onkeyup="filterItems()" />
+    <datalist id="items-list">
+        
+        {% for food in scraped_data%}
+            
+            <option value={{food.item_name | trim | replace(' ', '_')}}>
+        {% endfor %}
+
+    </datalist>
+    <ul id="combinations-list">
+        {% for combination in combinations %}
+            <li class="mb-4 combination-li" >
+                <div class="bg-white shadow-md rounded p-4">
+                    <h2 class="text-lg font-semibold mb-2">Combination {{ loop.index0 + 1 }}</h2>
+                    <ul>
+                        {% for item in combination[0] %}
+                            <li class="flex justify-between items-center item-li">
+                                <span class="item-name">{{ item.item_name }}</span>
+                                <span>MRP: {{ item.mrp }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <p class="text-gray-700 mt-4">
+                        {% if upto_val != 0 %}
+                            Total Amount: {{ combination[1] }}
+                            <br/>
+                            Discount Amount: {{ upto_val }}
+                            <br>
+                            Offer Amount: {{ combination[1] - upto_val }}
+                            {% else %}
+                                Total Amount: {{ combination[1] }}
+                            {% endif %}
+                        </p>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

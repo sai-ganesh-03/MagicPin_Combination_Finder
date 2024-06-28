@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combination Finder</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        
+            
+        .loading-overlay {
+            display: none;
+            position:fixed;
+            top:0;
+            left:0;
+            width:100vw;
+            height:100vw;
+            justify-content: center;
+            align-items: flex-start;
+            z-index: 9999;
+            
+        }
+
+        .loading-text {
+            margin-top:5rem;
+            color: black;
+        }
+        </style>
+    </style>
+    <script>
+        function validateAndShowLoading() {
+            if (validateForm()) {
+                showLoading();
+                return true;
+            }
+            return false;
+        }
+        function validateForm() {
+            var url = document.getElementById('url').value;
+            var targetSum = document.getElementById('target_sum').value;
+            var percentage = document.getElementById('percentage').value;
+            var upto = document.getElementById('upto').value;
+
+            if (url.trim() === '') {
+                alert('Please enter a URL.');
+                return false;
+            }
+
+            if (!url.includes('magicpin.in')) {
+                alert('The URL must be from magicpin.in domain.');
+                return false;
+            }
+
+            if (targetSum.trim() === '' && (percentage.trim() === '' || upto.trim() === '')) {
+                alert('Please enter either Total Amount or Percentage off with Upto value.');
+                return false;
+            }
+
+            if (targetSum.trim() !== '' && (percentage.trim() !== '' || upto.trim() !== '')) {
+                alert('Please enter only Total Amount or Percentage off with Upto value, not both.');
+                return false;
+            }
+
+            return true;
+        }
+        function showLoading() {
+            var mainDiv=document.getElementById('main-container')
+            mainDiv.classList.add('hidden')
+            var loadingOverlay = document.getElementById('loading-overlay');
+            loadingOverlay.style.display = 'flex';
+            var loadingText = document.getElementById('loading-text');
+            var texts = ["Getting the restuarant details", "Getting all the food items", "Creating combinations"];
+            var index = 0;
+            loadingText.textContent = texts[index];
+            var intervalId = setInterval(function() {
+                index++;
+                if (index >= texts.length) {
+                    clearInterval(intervalId);
+                } else {
+                    loadingText.textContent = texts[index];
+                }
+            }, 2000); // Change this value to adjust the speed of text change (in milliseconds)
+        }
+    </script>
+    </script>
+</head>
+
+<body class="bg-gray-200">
+    <div id="main-container" class="container max-w-md mx-auto md:max-w-lg py-8">
+        <h2 class="text-2xl mb-4 text-center">{{error}}</h2>
+        <h1 class="text-3xl font-bold mb-4 text-center">MagicPin Food Combinations Finder</h1>
+        <p class="text-base  mb-4 text-center">This website will find you the best food combinations which will get you a maximum discount</p>
+        
+        <h2 class="text-2xl mb-4 text-center">Enter URL and Discount Details</h2>
+        <p class="mb-4 text-center">It takes 5-10 seconds to load</p>
+        <form action="/" method="post" class="max-w-md mx-auto " onsubmit="return validateAndShowLoading()">
+            <div class="mb-4">
+                <label for="url" class="block mb-2">MagicPin Restaurant URL:</label>
+                <input type="text" id="url" name="url" placeholder="https://magicpin.in/walletRecharge?merchantId=1832880"
+                class="w-full border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-400">
+            </div>
+            <div class="w-full md:w-1/2">
+                <label for="target_sum" class="block mb-2">Total Amt:</label>
+                <input type="number" id="target_sum" name="target_sum" placeholder="100"
+                class="w-full border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-400">
+            </div>
+            <br/>
+            <h3 class="text-2xl mb-4 text-center">OR</h3>
+            <div class="mb-4 flex flex-col md:flex-row md:space-x-4">
+                <div class="w-full md:w-1/2">
+                    <label for="percentage" class="block mb-2">Percentage off:</label>
+                    <input type="number" id="percentage" name="percentage" placeholder="94"
+                    class="w-full border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-400">
+                </div>
+                <div class="mb-4">
+                    <label for="upto" class="block mb-2">Upto:</label>
+                    <input type="number" id="upto" name="upto" placeholder="100"
+                    class="w-full border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-400">
+                </div>
+            </div>
+            
+            <div>
+                <input type="submit" value="Submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded cursor-pointer w-full md:w-auto">
+            </div>
+        </form>
+        <div id="tutorialDiv" class="py-2 border-2 mt-4 border-black rounded">
+
+            <h1 class="text-xl font-bold text-center mb-2">Tutorial</h1>
+            <p class="text-base  mb-4 text-center">You can enter the total amount for which the food combinations are generated or simlpy find the discount details in the Magicpin app as shown below</p>
+            
+            <img class="my-4 px-4 " src="/static/imgs/magicpin_voucher.png" alt="MagicPin Voucher">
+            <p class="text-base  mb-4 text-center">Get the link by navigating to the Restaurant and clicking on the share button as shown below</p>
+            <img class="my-4 px-4  " src="/static/imgs/tutorial.jpg" alt="Tutorial Image">
+            <p class="text-base  mb-4 text-center">Fill all the details above and click on submit</p>
+            <p class="text-base  mb-4 text-center">Result:</p>
+            <img class="my-4 px-4  " src="/static/imgs/combos_img.png" alt="Tutorial Image">
+        </div>
+    </div>
+    <div id="loading-overlay" class="loading-overlay" >
+        <div id="loading-text" class="loading-text text-xl md:text-3xl">getting the restuarants details</div>
+</body>
+
+</html>
